@@ -1,51 +1,52 @@
-from django.http import HttpResponse, JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework.parsers import JSONParser
 from hitmen.models import Hitmen
 from hitmen.serializers import HitmenSerializer
+from django.http import Http404
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
 
+from rest_framework.decorators import api_view
 
-@csrf_exempt
-def hitmen_list(request):
+class HitmenList(APIView):
     """
     List all code hitmen, or create a new hitman.
     """
-    if request.method == 'GET':
+    def get(self, request, format=None):
         hitmen = Hitmen.objects.all()
         serializer = HitmenSerializer(hitmen, many=True)
-        return JsonResponse(serializer.data, safe=False)
+        return Response(serializer.data)
 
-    elif request.method == 'POST':
-        data = JSONParser().parse(request)
-        serializer = HitmenSerializer(data=data)
+    def post(self, request, format=None):
+        serializer = HitmenSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return JsonResponse(serializer.data, status=201)
-        return JsonResponse(serializer.errors, status=400)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-@csrf_exempt
-def hitmen_detail(request, pk):
+class HitmanDetail(APIView):
     """
     Retrieve, update or delete a code hitmen.
     """
-    try:
-        hitmen = Hitmen.objects.get(pk=pk)
-    except Hitmen.DoesNotExist:
-        return HttpResponse(status=404)
+    def get_object(self, pk):
+        try:
+            return Hitmen.objects.get(pk=pk)
+        except Hitmen.DoesNotExist:
+            raise Http404
 
-    if request.method == 'GET':
-        serializer = HitmenSerializer(hitmen)
-        return JsonResponse(serializer.data)
+    def get(self, request, pk, format=None):
+        hitman = self.get_object(pk)
+        serializer = HitmenSerializer(hitman)
+        return Response(serializer.data)
 
-    elif request.method == 'PUT':
-        data = JSONParser().parse(request)
-        serializer = HitmenSerializer(hitmen, data=data)
+    def put(self, request, pk, format=None):
+        hitman = self.get_object(pk)
+        serializer = HitmenSerializer(hitman, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return JsonResponse(serializer.data)
-        return JsonResponse(serializer.errors, status=400)
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    elif request.method == 'DELETE':
-        hitmen.delete()
-        return HttpResponse(status=204)
+    def delete(self, request, pk, format=None):
+        hitman = self.get_object(pk)
+        hitman.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

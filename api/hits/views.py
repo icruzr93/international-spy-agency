@@ -1,50 +1,52 @@
-from django.http import HttpResponse, JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework.parsers import JSONParser
 from hits.models import Hit
 from hits.serializers import HitSerializer
+from django.http import Http404
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
 
+from rest_framework.decorators import api_view
 
-@csrf_exempt
-def hits_list(request):
+class HitList(APIView):
     """
     List all code hits, or create a new hit.
     """
-    if request.method == 'GET':
+    def get(self, request, format=None):
         hits = Hit.objects.all()
         serializer = HitSerializer(hits, many=True)
-        return JsonResponse(serializer.data, safe=False)
+        return Response(serializer.data)
 
-    elif request.method == 'POST':
-        data = JSONParser().parse(request)
-        serializer = HitSerializer(data=data)
+    def post(self, request, format=None):
+        serializer = HitSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return JsonResponse(serializer.data, status=201)
-        return JsonResponse(serializer.errors, status=400)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@csrf_exempt
-def hit_detail(request, pk):
+class HitDetail(APIView):
     """
     Retrieve, update or delete a code hit.
     """
-    try:
-        hit = Hit.objects.get(pk=pk)
-    except Hits.DoesNotExist:
-        return HttpResponse(status=404)
+    def get_object(self, pk):
+        try: 
+            return Hit.objects.get(pk=pk)
+        except Hit.DoesNotExist:
+            raise Http404
 
-    if request.method == 'GET':
+    def get(self, request, pk, format=None):
+        hit = self.get_object(pk)
         serializer = HitSerializer(hit)
-        return JsonResponse(serializer.data)
-
-    elif request.method == 'PUT':
-        data = JSONParser().parse(request)
-        serializer = HitSerializer(hit, data=data)
+        return Response(serializer.data)
+    
+    def put(self, request, pk, format=None):
+        hit = self.get_object(pk)
+        serializer = HitSerializer(hit, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return JsonResponse(serializer.data)
-        return JsonResponse(serializer.errors, status=400)
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    elif request.method == 'DELETE':
+    def delete(self, request, pk, format=None):
+        hit = self.get_object(pk)
         hit.delete()
-        return HttpResponse(status=204)
+        return Response(status=status.HTTP_204_NO_CONTENT)
