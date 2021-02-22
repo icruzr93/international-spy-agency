@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 HIT_STATES = (
     ("in_progress", "in_progress"),
@@ -11,7 +12,7 @@ class Hit(models.Model):
     assigned_to = models.CharField(max_length=100, null=False)
     state = models.CharField(choices=HIT_STATES, default='in_progress', max_length=50)
 
-    hitman = models.ForeignKey('hitmen.Hitman', related_name='hits', on_delete=models.CASCADE)
+    hitman = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='hits', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
