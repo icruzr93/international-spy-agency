@@ -4,13 +4,15 @@ from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-
-from rest_framework.decorators import api_view
+from rest_framework import permissions
+from app.permissions import IsOwnerOrReadOnly
 
 class HitList(APIView):
     """
     List all code hits, or create a new hit.
     """
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
     def get(self, request, format=None):
         hits = Hit.objects.all()
         serializer = HitSerializer(hits, many=True)
@@ -27,11 +29,17 @@ class HitDetail(APIView):
     """
     Retrieve, update or delete a code hit.
     """
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, 
+        IsOwnerOrReadOnly]
+
     def get_object(self, pk):
         try: 
             return Hit.objects.get(pk=pk)
         except Hit.DoesNotExist:
             raise Http404
+
+    def perform_create(self, serializer):
+        serializer.save(hitman=self.request.user)
 
     def get(self, request, pk, format=None):
         hit = self.get_object(pk)
