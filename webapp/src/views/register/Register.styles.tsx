@@ -1,16 +1,12 @@
 import styled from "styled-components";
 
-const Container = styled.main`
-  grid-area: main;
+const Container = styled.div`
+  grid-area: divcontent;
   display: grid;
   padding: 3em;
-  background: #fdfcfc;
   border-radius: 20px;
-  -webkit-box-shadow: 3px 3px 10px #cecece;
-  -moz-box-shadow: 3px 3px 10px #cecece;
-  box-shadow: 3px 3px 10px #cecece;
   margin: 2rem auto 0 auto;
-  width: 40%;
+  width: 50%;
 
   @media (max-width: 480px) {
     width: auto;
@@ -18,7 +14,7 @@ const Container = styled.main`
   }
 
   @media (min-width: 481px) and (max-width: 950px) {
-    width: 60%;
+    width: 80%;
   }
 
   @media (min-width: 2500px) and (max-width: 3500px) {
@@ -26,7 +22,7 @@ const Container = styled.main`
   }
 
   @media (min-width: 3501px) and (max-width: 6000px) {
-    width: 20%;
+    width: 30%;
   }
 
   small {
@@ -46,17 +42,17 @@ const ContainerButton = styled.div`
 
   button {
     font-weight: bold;
+    width: 10rem;
   }
 `;
 
-const Welcome = styled.div`
+const Title = styled.div`
   text-align: center;
-  color: #007bff;
   font-size: 30px;
   font-weight: bold;
-  border-bottom: 2px solid #007bff;
+  border-bottom: 1px solid #000000;
   margin-bottom: 3rem;
   margin-top: 1rem;
 `;
 
-export { Container, ContainerButton, Welcome };
+export { Container, ContainerButton, Title };

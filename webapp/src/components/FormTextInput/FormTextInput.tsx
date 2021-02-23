@@ -11,7 +11,12 @@ function FormTextInput({ name, label, ...otherProps }: FormTextInputProps) {
   return (
     <Form.Group>
       <Form.Label htmlFor={otherProps.id}>{label && label}</Form.Label>
-      <Form.Group {...field} {...otherProps} />
+      <Form.Control
+        {...field}
+        name={name}
+        id={otherProps.id}
+        type={otherProps.type}
+      />
       {showError && <Form.Text>{error}</Form.Text>}
     </Form.Group>
   );

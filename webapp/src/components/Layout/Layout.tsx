@@ -1,7 +1,11 @@
 import { StyledLayout } from "./Layout.styles";
 
-function Layout() {
-  return <StyledLayout />;
+interface LayoutProps {
+  children: React.ReactNode;
+}
+
+function Layout({ children }: LayoutProps) {
+  return <StyledLayout>{children}</StyledLayout>;
 }
 
 export { Layout };

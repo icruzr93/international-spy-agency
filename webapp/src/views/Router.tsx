@@ -2,7 +2,10 @@ import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
 import { Nav } from "components/Nav";
+import { Layout } from "components/Layout";
+
 import { Login } from "views/login";
+import { Register } from "views/register";
 import { Signup } from "views/signup";
 import { Hitmans } from "views/hitmans";
 import { Hits } from "views/hits";
@@ -11,11 +14,14 @@ import { Home } from "views/home";
 function App() {
   return (
     <Router>
-      <div>
+      <Layout>
         <Nav />
         <Switch>
           <Route path="/login">
             <Login />
+          </Route>
+          <Route path="/register">
+            <Register />
           </Route>
           <Route path="/signup">
             <Signup />
@@ -33,7 +39,7 @@ function App() {
             <Login />
           </Route>
         </Switch>
-      </div>
+      </Layout>
     </Router>
   );
 }

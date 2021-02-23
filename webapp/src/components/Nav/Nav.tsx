@@ -1,21 +1,18 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { NavBar, Menu, Logo } from "./Nav.styles";
+import Image from "./images/logo.png";
 
 function Nav() {
   return (
-    <nav>
-      <ul>
-        <li>
-          <Link to="/">Home</Link>
-        </li>
-        <li>
-          <Link to="/login">Login</Link>
-        </li>
-        <li>
-          <Link to="/hitmans">Users</Link>
-        </li>
-      </ul>
-    </nav>
+    <NavBar>
+      <Logo src={Image} />
+      <Menu>
+        <Link to="/">Home</Link>
+        <Link to="/login">Login</Link>
+        <Link to="/hitmans">Users</Link>
+      </Menu>
+    </NavBar>
   );
 }
 
