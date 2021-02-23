@@ -1,8 +1,9 @@
-interface FormTextInputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {
+interface FormTextInputProps {
   name: string;
   label: string | React.ReactElement;
-  caption?: string;
+  id: string;
+  placeholder: string;
+  type: string;
 }
 
 export { FormTextInputProps };

@@ -1,17 +1,21 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import Router from "views/Router";
+import { QueryClientProvider, QueryClient } from "react-query";
+import { ReactQueryDevtools } from "react-query/devtools";
 
 import "./index.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-import reportWebVitals from "./reportWebVitals";
+import Router from "views/Router";
+
+const queryClient = new QueryClient();
 
 ReactDOM.render(
-  <React.StrictMode>
-    <Router />
-  </React.StrictMode>,
+  <QueryClientProvider client={queryClient}>
+    <React.StrictMode>
+      <Router />
+      <ReactQueryDevtools />
+    </React.StrictMode>
+  </QueryClientProvider>,
   document.getElementById("root")
 );
-
-reportWebVitals();

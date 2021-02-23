@@ -9,7 +9,7 @@ import { string as yupString, object as yupObject } from "yup";
 import { FormTextInput } from "components/FormTextInput";
 import { Layout } from "components/Layout";
 
-import { RegisterValues } from "./Register.d";
+import { CreateHitFormValues } from "./CreateHit.d";
 
 const API_SERVER = process.env.REACT_APP_API_SERVER;
 
@@ -22,14 +22,16 @@ const validation = yupObject().shape({
   password: yupString().required("Password requerido"),
 });
 
-function Register() {
-  const { mutate, isError, isSuccess } = useMutation((data: RegisterValues) => {
-    return axios.post(`${API_SERVER}/users/`, data);
-  });
+function CreateHit() {
+  const { mutate, isError, isSuccess } = useMutation(
+    (data: CreateHitFormValues) => {
+      return axios.post(`${API_SERVER}/users/`, data);
+    }
+  );
 
   const onSubmit = (
-    values: RegisterValues,
-    helpers: FormikHelpers<RegisterValues>
+    values: CreateHitFormValues,
+    helpers: FormikHelpers<CreateHitFormValues>
   ) => {
     mutate(values, {
       onError: () => {
@@ -54,7 +56,7 @@ function Register() {
         validationSchema={validation}
         onSubmit={onSubmit}
       >
-        {({ isSubmitting, isValid }: FormikProps<RegisterValues>) => (
+        {({ isSubmitting, isValid }: FormikProps<CreateHitFormValues>) => (
           <Form>
             <FormTextInput
               id="first_name"
@@ -95,4 +97,4 @@ function Register() {
   );
 }
 
-export { Register };
+export { CreateHit };

@@ -11,8 +11,7 @@ class UserList(APIView):
     """
     List all code users, or create a new user.
     """
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly, 
-        IsOwnerOrReadOnly]
+    permission_classes = []
 
     def get(self, request, format=None):
         user = User.objects.all()
@@ -38,10 +37,6 @@ class UserDetail(APIView):
             return User.objects.get(pk=pk)
         except User.DoesNotExist:
             raise Http404
-
-    def perform_create(self, serializer):
-        serializer.save(manager=self.request.user)
-
 
     def get(self, request, pk, format=None):
         user = self.get_object(pk)

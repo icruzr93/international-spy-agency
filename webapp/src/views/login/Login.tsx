@@ -1,57 +1,81 @@
 import React from "react";
-import { Formik } from "formik";
+import axios from "axios";
+import { Formik, Form, FormikProps } from "formik";
+import { useMutation } from "react-query";
+import { Redirect } from "react-router";
 import { string as yupString, object as yupObject } from "yup";
-import { FormTextInput } from "components/FormTextInput";
-import { Form, Button } from "react-bootstrap";
+import { Alert, Button } from "react-bootstrap";
 
-import { Container, ContainerButton, Welcome } from "./Login.styles";
+import { FormTextInput } from "components/FormTextInput";
+import { Layout } from "components/Layout";
+import { useAuthContext } from "contexts/AuthContext";
+
+import { LoginFormValues, LoginSuccessReponse } from "./Login.d";
+
+const API_SERVER = process.env.REACT_APP_API_SERVER;
+
+const validation = yupObject().shape({
+  email: yupString()
+    .required("Correo electrónico requerido")
+    .email("Por favor introduce un correo electrónico válido"),
+  password: yupString().required("Password requerido"),
+});
 
 function Login() {
-  const formData = {
-    email: "",
-    password: "",
-  };
-
-  const validation = yupObject().shape({
-    email: yupString()
-      .required("Correo electrónico requerido")
-      .email("Por favor introduce un correo electrónico válido"),
-    password: yupString().required("Password requerido"),
+  const { isAuthenticated, setAuth } = useAuthContext();
+  const { mutate, isError } = useMutation((data: LoginFormValues) => {
+    return axios.post(`${API_SERVER}/auth/login/`, data);
   });
 
-  const handleSubmitLogin = () => {
-    console.log("Click");
+  const onSubmit = (values: LoginFormValues) => {
+    mutate(values, {
+      onSuccess: ({ data }: LoginSuccessReponse) => {
+        console.log();
+        const { access, refresh } = data;
+        const { email } = values;
+        setAuth(access, refresh, email);
+      },
+    });
   };
 
+  if (isAuthenticated) {
+    return <Redirect to="/hits/nuevo" />;
+  }
+
   return (
-    <Container>
-      <Welcome>Bienvenido</Welcome>
+    <Layout pageTitle="Inicia sesión">
       <Formik
-        validateOnChange={false}
-        initialValues={formData}
+        initialValues={{
+          email: "",
+          password: "",
+        }}
+        onSubmit={onSubmit}
         validationSchema={validation}
-        onSubmit={handleSubmitLogin}
       >
-        {(formik) => (
-          <Form onSubmit={formik.handleSubmit}>
+        {({ isValid }: FormikProps<LoginFormValues>) => (
+          <Form>
             <FormTextInput
               id="email"
               label="Email"
-              {...formik.getFieldProps("email")}
+              name="email"
+              type="text"
+              placeholder="Introduce tu correo electrónico"
             />
             <FormTextInput
               id="password"
               type="password"
               label="Password"
-              {...formik.getFieldProps("password")}
+              name="password"
+              placeholder="Introduce tu contraseña"
             />
-            <ContainerButton>
-              <Button>Iniciar sesión</Button>
-            </ContainerButton>
+            {isError && <Alert variant="danger">Credenciales invalidas</Alert>}
+            <Button type="submit" disabled={!isValid}>
+              Iniciar sesión
+            </Button>
           </Form>
         )}
       </Formik>
-    </Container>
+    </Layout>
   );
 }
 

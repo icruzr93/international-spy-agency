@@ -14,9 +14,3 @@ migrations:
 
 migrate:
 	docker-compose exec api python manage.py migrate
-
-tests:
-	docker-compose exec api python manage.py test --verbosity=2
-
-lint:
-	docker-compose exec api poetry run black ./api

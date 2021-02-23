@@ -1,11 +1,22 @@
-import { StyledLayout } from "./Layout.styles";
+import { Nav } from "components/Nav";
 
-interface LayoutProps {
-  children: React.ReactNode;
-}
+import { LayoutProps } from "./Layout.d";
+import {
+  StyledMainContainer,
+  StyledTitle,
+  StyledLayout,
+} from "./Layout.styles";
 
-function Layout({ children }: LayoutProps) {
-  return <StyledLayout>{children}</StyledLayout>;
+function Layout({ children, pageTitle }: LayoutProps) {
+  return (
+    <StyledLayout>
+      <Nav />
+      <StyledMainContainer>
+        <StyledTitle>{pageTitle}</StyledTitle>
+        {children}
+      </StyledMainContainer>
+    </StyledLayout>
+  );
 }
 
 export { Layout };
