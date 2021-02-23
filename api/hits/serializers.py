@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from hits.models import Hit, HIT_STATES
+from hits.models import Hit
 
 class HitSerializer(serializers.ModelSerializer):
     hitman = serializers.ReadOnlyField(source='hitman.email')

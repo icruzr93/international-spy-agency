@@ -1,13 +1,18 @@
 from django.db import models
 from django.conf import settings
 
-HIT_STATES = (
-    ("in_progress", "in_progress"),
-    ("completed", "completed"),
-    ("failed", "failed"),
-)
 
 class Hit(models.Model):
+    IN_PROGRESS = 'in_progress'
+    COMPLETED = 'completed'
+    FAILED = 'failed'
+
+    HIT_STATES = (
+        (IN_PROGRESS, "in_progress"),
+        (COMPLETED, "completed"),
+        (FAILED, "failed"),
+    )
+
     target_name = models.CharField(max_length=100, null=False)
     assigned_to = models.CharField(max_length=100, null=False)
     state = models.CharField(choices=HIT_STATES, default='in_progress', max_length=50)
@@ -17,5 +22,4 @@ class Hit(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        db_table = 'hits'
         ordering = ['created_at', 'updated_at']

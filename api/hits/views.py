@@ -27,7 +27,7 @@ class HitList(APIView):
 
 class HitDetail(APIView):
     """
-    Retrieve, update or delete a code hit.
+    Retrieve, update or delete a hit.
     """
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, 
         IsOwnerOrReadOnly]

@@ -1,17 +1,18 @@
 from hitmen.models import User
+from hitmen.permissions import IsOwnerOrReadOnly
 from hitmen.serializers import UserSerializer
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import permissions
-from hitmen.permissions import IsOwnerOrReadOnly
 
 class UserList(APIView):
     """
     List all code users, or create a new user.
     """
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, 
+        IsOwnerOrReadOnly]
 
     def get(self, request, format=None):
         user = User.objects.all()
@@ -40,6 +41,7 @@ class UserDetail(APIView):
 
     def perform_create(self, serializer):
         serializer.save(manager=self.request.user)
+
 
     def get(self, request, pk, format=None):
         user = self.get_object(pk)
