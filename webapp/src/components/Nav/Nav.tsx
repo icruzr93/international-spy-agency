@@ -3,14 +3,28 @@ import { Link } from "react-router-dom";
 import { NavBar, Menu, Logo } from "./Nav.styles";
 import Image from "./images/logo.png";
 import { useAuthContext } from "contexts/AuthContext";
+import { HitmanTypes } from "global.d";
 
 function NavItemsAutheticated() {
+  const { authState } = useAuthContext();
+  const { hitman_type } = authState;
+
+  const showManagementLinks = [HitmanTypes.BOSS, HitmanTypes.MANAGER].includes(
+    hitman_type as HitmanTypes
+  );
+
   return (
     <>
       <Link to="/hits">Home</Link>
       <Link to="/hits">Mis hits</Link>
-      <Link to="/hitmen">Mis hitmen</Link>
-      <Link to="/hits/nuevo">Crear objetivo</Link>
+
+      {showManagementLinks && (
+        <>
+          <Link to="/hitmen">Mis hitmen</Link>
+          <Link to="/hits/nuevo">Crear objetivo</Link>
+        </>
+      )}
+
       <Link to="/logout">Logout</Link>
     </>
   );

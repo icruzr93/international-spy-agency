@@ -1,7 +1,10 @@
+import { HitmanTypes } from "global.d";
+
 type AuthState = {
   accessToken: string | undefined;
   refreshToken: string | undefined;
   email: string | undefined;
+  hitman_type: HitmanTypes | undefined;
 };
 
 interface AuthContextProps {
@@ -13,6 +16,7 @@ enum AuthActions {
   DO_LOGOUT = "DO_LOGOUT",
   SET_AUTH = "SET_AUTH",
   SET_INITIAL_STATE = "SET_INITIAL_STATE",
+  SET_PROFILE = "SET_PROFILE",
 }
 
 type IAuthAction =
@@ -24,6 +28,10 @@ type IAuthAction =
   | {
       value: Partial<AuthState>;
       type: AuthActions.SET_AUTH;
+    }
+  | {
+      value: Partial<AuthState>;
+      type: AuthActions.SET_PROFILE;
     };
 
 export { AuthContextProps, AuthState, AuthActions, IAuthAction };

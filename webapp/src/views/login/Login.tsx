@@ -38,7 +38,7 @@ function Login() {
   };
 
   if (isAuthenticated) {
-    return <Redirect to="/hits" />;
+    return <Redirect to="/profile" />;
   }
 
   return (

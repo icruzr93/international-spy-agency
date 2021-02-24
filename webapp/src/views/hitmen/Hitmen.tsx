@@ -31,7 +31,7 @@ function Hitmen() {
   if (!data) return <>"Loading..."</>;
 
   return (
-    <Layout pageTitle="Mis lista de hitman">
+    <Layout pageTitle="Mis hitmen">
       <Table striped bordered hover>
         <thead>
           <tr>

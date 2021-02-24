@@ -1,3 +1,4 @@
+import { HitmanTypes } from "global";
 import { useCallback, useContext, useMemo } from "react";
 import { AuthContext } from "./AuthContext";
 import { AuthActions, AuthState } from "./AuthContext.d";
@@ -8,9 +9,16 @@ const useIsAuthenticated = ({ accessToken }: AuthState) => {
   }, [accessToken]);
 };
 
+const useIsValidAuthObject = ({ accessToken, hitman_type }: AuthState) => {
+  return useMemo(() => {
+    return accessToken !== undefined && hitman_type !== undefined;
+  }, [accessToken, hitman_type]);
+};
+
 function useAuthContext() {
   const { authState, dispatchAuthState } = useContext(AuthContext);
   const isAuthenticated = useIsAuthenticated(authState);
+  const isValidAuthObject = useIsValidAuthObject(authState);
 
   const doLogout = useCallback(() => {
     dispatchAuthState({
@@ -28,11 +36,23 @@ function useAuthContext() {
     [dispatchAuthState]
   );
 
+  const setProfile = useCallback(
+    (hitman_type: HitmanTypes) => {
+      dispatchAuthState({
+        type: AuthActions.SET_PROFILE,
+        value: { hitman_type },
+      });
+    },
+    [dispatchAuthState]
+  );
+
   return {
     authState,
     doLogout,
     isAuthenticated,
+    isValidAuthObject,
     setAuth,
+    setProfile,
   };
 }
 

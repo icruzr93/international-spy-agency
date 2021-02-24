@@ -26,7 +26,7 @@ interface Hitman {
   first_name: string;
   last_name: string;
   email: string;
-  hitman_type: string;
+  hitman_type: HitmanTypes;
   manager: string;
 }
 

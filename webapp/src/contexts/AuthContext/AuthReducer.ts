@@ -7,9 +7,10 @@ const initialState: AuthState = {
   accessToken: undefined,
   refreshToken: undefined,
   email: "",
+  hitman_type: undefined,
 };
 
-function AuthReducer(_: AuthState, action: IAuthAction) {
+function AuthReducer(state: AuthState, action: IAuthAction) {
   switch (action.type) {
     case AuthActions.SET_INITIAL_STATE: {
       const authState: AuthState = action.value;
@@ -19,9 +20,20 @@ function AuthReducer(_: AuthState, action: IAuthAction) {
     case AuthActions.SET_AUTH: {
       const { refreshToken, accessToken, email } = action.value;
       const objToStore: AuthState = {
+        ...state,
         refreshToken,
         accessToken,
         email,
+      };
+      storage.setItem(StorageKeys.AUTH_STORAGE_KEY, objToStore);
+
+      return objToStore;
+    }
+    case AuthActions.SET_PROFILE: {
+      const { hitman_type } = action.value;
+      const objToStore: AuthState = {
+        ...state,
+        hitman_type,
       };
       storage.setItem(StorageKeys.AUTH_STORAGE_KEY, objToStore);
 
