@@ -1,10 +1,12 @@
 import os
 from pathlib import Path
+from datetime import timedelta
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'yc@weuf-vywc@+$p0nt4_j==b_=&)%s_*t%&1yu%@6*tna!%!l'
 DEBUG = True
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(" ")
+
 
 INSTALLED_APPS = [
     'corsheaders',
@@ -17,7 +19,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'hitmen',
-    'hits'
+    'hits',
+    'me'
 ]
 
 MIDDLEWARE = [
@@ -90,6 +93,11 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
 
 CORS_ORIGIN_ALLOW_ALL = True

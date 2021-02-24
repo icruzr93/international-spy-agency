@@ -30,7 +30,6 @@ function Login() {
   const onSubmit = (values: LoginFormValues) => {
     mutate(values, {
       onSuccess: ({ data }: LoginSuccessReponse) => {
-        console.log();
         const { access, refresh } = data;
         const { email } = values;
         setAuth(access, refresh, email);
@@ -39,7 +38,7 @@ function Login() {
   };
 
   if (isAuthenticated) {
-    return <Redirect to="/hits/nuevo" />;
+    return <Redirect to="/hits" />;
   }
 
   return (

@@ -3,20 +3,20 @@ import { Badge, Table } from "react-bootstrap";
 import { useQuery } from "react-query";
 import axios from "axios";
 
-import { Hit, HitStateTypes } from "global.d";
+import { Hitman, HitmanTypes } from "global.d";
 import { Layout } from "components/Layout";
 import { useAuthContext } from "contexts/AuthContext";
 
 const API_SERVER = process.env.REACT_APP_API_SERVER;
 
-function Hits() {
+function Hitmen() {
   const { authState } = useAuthContext();
   const { accessToken } = authState;
 
-  const { data } = useQuery<Hit[]>(
-    "my-hits",
+  const { data } = useQuery<Hitman[]>(
+    "my-hitmen",
     async () => {
-      const { data } = await axios.get(`${API_SERVER}/me/my-hits`, {
+      const { data } = await axios.get(`${API_SERVER}/me/my-hitmen`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -31,33 +31,35 @@ function Hits() {
   if (!data) return <>"Loading..."</>;
 
   return (
-    <Layout pageTitle="Mi lista de objetivos">
+    <Layout pageTitle="Mis lista de hitman">
       <Table striped bordered hover>
         <thead>
           <tr>
             <th>#</th>
-            <th>Objetivo</th>
-            <th>Estado</th>
-            <th>Asignado</th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Email</th>
+            <th>Email</th>
           </tr>
         </thead>
         <tbody>
-          {data.map(({ id, target_name, state, hitman }) => (
+          {data.map(({ id, first_name, last_name, hitman_type, manager }) => (
             <tr key={id}>
               <td>{id}</td>
-              <td>{target_name}</td>
+              <td>{first_name}</td>
+              <td>{last_name}</td>
               <td>
-                {state === HitStateTypes.IN_PROGRESS && (
-                  <Badge variant="primary">{state}</Badge>
+                {hitman_type === HitmanTypes.BOSS && (
+                  <Badge variant="primary">{hitman_type}</Badge>
                 )}
-                {state === HitStateTypes.COMPLETED && (
-                  <Badge variant="success">{state}</Badge>
+                {hitman_type === HitmanTypes.MANAGER && (
+                  <Badge variant="success">{hitman_type}</Badge>
                 )}
-                {state === HitStateTypes.FAILED && (
-                  <Badge variant="danger">{state}</Badge>
+                {hitman_type === HitmanTypes.HITMAN && (
+                  <Badge variant="danger">{hitman_type}</Badge>
                 )}
               </td>
-              <td>{hitman}</td>
+              <td>{manager}</td>
             </tr>
           ))}
         </tbody>
@@ -66,4 +68,4 @@ function Hits() {
   );
 }
 
-export { Hits };
+export { Hitmen };

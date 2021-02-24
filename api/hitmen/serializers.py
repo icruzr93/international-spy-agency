@@ -8,10 +8,11 @@ class UserSerializer(serializers.ModelSerializer):
     hitmen = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     manager = serializers.ReadOnlyField(source='manager.email', read_only=True)
     manager_id = serializers.IntegerField(required=False, write_only=True)
+    password = serializers.CharField(required=False, write_only=True)
 
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'email', 'manager_id', "manager", 'hitman_type', 'password', 'hits', 'hitmen']
+        fields = ["id", 'first_name', 'last_name', 'email', 'manager_id', "manager", 'hitman_type', 'password', 'hits', 'hitmen']
 
     def create(self, validated_data):
         user = User.objects.create(**validated_data)

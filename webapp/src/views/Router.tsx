@@ -2,9 +2,9 @@ import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
 import { Login } from "views/login";
+import { Logout } from "views/logout";
 import { Register } from "views/register";
-import { Signup } from "views/signup";
-import { Hitmans } from "views/hitmans";
+import { Hitmen } from "views/hitmen";
 import { Hits } from "views/hits";
 import { CreateHit } from "views/create-hit";
 import { Home } from "views/home";
@@ -18,23 +18,23 @@ function App() {
           <Route path="/login">
             <Login />
           </Route>
+          <Route path="/logout">
+            <Logout />
+          </Route>
           <Route path="/registro">
             <Register />
           </Route>
-          <Route path="/signup">
-            <Signup />
+          <Route path="/hits/nuevo" exact>
+            <CreateHit />
           </Route>
-          <Route path="/hits">
+          <Route path="/hits" exact>
             <Hits />
           </Route>
-          <Route path="/hits/nuevo">
-            <CreateHit />
+          <Route path="/hitmen">
+            <Hitmen />
           </Route>
           <Route path="/home">
             <Home />
-          </Route>
-          <Route path="/hitmans">
-            <Hitmans />
           </Route>
           <Route path="/">
             <Login />

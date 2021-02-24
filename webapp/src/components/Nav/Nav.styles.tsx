@@ -16,7 +16,7 @@ const Menu = styled.nav`
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
 
   @media (max-width: 480px) {
     width: 100%;

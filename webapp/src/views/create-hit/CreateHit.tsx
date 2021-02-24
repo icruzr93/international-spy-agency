@@ -10,22 +10,26 @@ import { FormTextInput } from "components/FormTextInput";
 import { Layout } from "components/Layout";
 
 import { CreateHitFormValues } from "./CreateHit.d";
+import { useAuthContext } from "contexts/AuthContext";
 
 const API_SERVER = process.env.REACT_APP_API_SERVER;
 
 const validation = yupObject().shape({
-  first_name: yupString().required("Nombre requerido"),
-  last_name: yupString().required("Apellido requerido"),
-  email: yupString()
-    .required("Correo electrónico requerido")
-    .email("Por favor introduce un correo electrónico válido"),
-  password: yupString().required("Password requerido"),
+  target_name: yupString().required("Nombre objetivo requerido"),
+  hitman_id: yupString().required("Hitman requerido"),
 });
 
 function CreateHit() {
+  const { authState } = useAuthContext();
+  const { accessToken } = authState;
+
   const { mutate, isError, isSuccess } = useMutation(
     (data: CreateHitFormValues) => {
-      return axios.post(`${API_SERVER}/users/`, data);
+      return axios.post(`${API_SERVER}/hits/`, data, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
     }
   );
 
@@ -41,54 +45,38 @@ function CreateHit() {
   };
 
   if (isSuccess) {
-    return <Redirect to="/login" />;
+    return <Redirect to="/hits" />;
   }
 
   return (
-    <Layout pageTitle="Registro">
+    <Layout pageTitle="Crear objetivo">
       <Formik
         initialValues={{
-          first_name: "",
-          last_name: "",
-          email: "",
-          password: "",
+          target_name: "",
+          hitman_id: "",
         }}
         validationSchema={validation}
         onSubmit={onSubmit}
       >
-        {({ isSubmitting, isValid }: FormikProps<CreateHitFormValues>) => (
+        {({ isValid }: FormikProps<CreateHitFormValues>) => (
           <Form>
             <FormTextInput
-              id="first_name"
-              label="Nombre"
-              name="first_name"
+              id="target_name"
+              label="Nombre objetivo"
+              name="target_name"
               placeholder="Nombre"
               type="text"
             />
             <FormTextInput
-              id="last_name"
-              label="Apellidos"
-              name="last_name"
+              id="hitman_id"
+              label="Hitman"
+              name="hitman_id"
               placeholder="Introduce tus apellidos"
               type="text"
             />
-            <FormTextInput
-              id="email"
-              label="Email"
-              name="email"
-              placeholder="Introduce tu correo electrónico"
-              type="text"
-            />
-            <FormTextInput
-              id="password"
-              type="password"
-              label="Password"
-              name="password"
-              placeholder="Introduce tu contraseña"
-            />
             {isError && <Alert variant="danger">Datos invalidos</Alert>}
-            <Button type="submit" disabled={!isValid || isSubmitting}>
-              Crear cuenta
+            <Button type="submit" disabled={!isValid}>
+              Crear objetivo
             </Button>
           </Form>
         )}

@@ -2,10 +2,47 @@ from hitmen.models import User
 from hitmen.permissions import IsOwnerOrReadOnly
 from hitmen.serializers import UserSerializer
 from django.http import Http404
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import permissions
+from rest_framework.generics import GenericAPIView
+
+class MyProfile(GenericAPIView):
+    """
+    Get profile info
+    """
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, format=None):
+        user = User.objects.get(email=request.user)
+        serializer = UserSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class MyHits(GenericAPIView):
+    """
+    Get profile info
+    """
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, format=None):
+        user = User.objects.get(email=request.user)
+        serializer = UserSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class MyHitmen(GenericAPIView):
+    """
+    Get profile info
+    """
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, format=None):
+        user = User.objects.get(email=request.user)
+        serializer = UserSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class UserList(APIView):
     """
