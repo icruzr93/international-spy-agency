@@ -29,6 +29,7 @@ interface Hitman {
   email: string;
   hitman_type: HitmanTypes;
   manager: string;
+  is_active: boolean;
 }
 
 export { StorageKeys, Hit, Hitman, HitStateTypes, HitmanTypes };

@@ -5,12 +5,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import permissions
-from hitmen.permissions import IsOwnerOrReadOnly
 
 class HitList(APIView):
-    """
-    List all code hits, or create a new hit.
-    """
+
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, format=None):
@@ -26,9 +23,7 @@ class HitList(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class HitDetail(APIView):
-    """
-    Retrieve, update or delete a hit.
-    """
+
     permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self, pk):

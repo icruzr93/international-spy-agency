@@ -17,7 +17,7 @@ function Hitmen() {
   const { data } = useQuery<Hitman[]>(
     "my-hitmen",
     async () => {
-      const { data } = await axios.get(`${API_SERVER}/me/my-hitmen`, {
+      const { data } = await axios.get(`${API_SERVER}/me/hitmen`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -41,12 +41,13 @@ function Hitmen() {
             <th>Apellido</th>
             <th>Email</th>
             <th>Tipo</th>
+            <th>Activo?</th>
             <th></th>
           </tr>
         </thead>
         <tbody>
           {data.map(
-            ({ id, first_name, last_name, email, hitman_type, manager }) => (
+            ({ id, first_name, last_name, email, hitman_type, is_active }) => (
               <tr key={id}>
                 <td>{id}</td>
                 <td>{first_name}</td>
@@ -61,6 +62,13 @@ function Hitmen() {
                   )}
                   {hitman_type === HitmanTypes.HITMAN && (
                     <Badge variant="danger">{hitman_type}</Badge>
+                  )}
+                </td>
+                <td>
+                  {is_active ? (
+                    <Badge variant="success">Activo</Badge>
+                  ) : (
+                    <Badge variant="danger">Inactivo</Badge>
                   )}
                 </td>
                 <td>

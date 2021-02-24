@@ -2,7 +2,7 @@ import React from "react";
 import axios from "axios";
 import { Alert, Button } from "react-bootstrap";
 import { useQuery } from "react-query";
-import { string as yupString, object as yupObject } from "yup";
+import { string as yupString, object as yupObject, bool as yupBool } from "yup";
 import { Formik, Form, FormikProps } from "formik";
 
 import { FormTextInput } from "components/FormTextInput";
@@ -18,6 +18,7 @@ const validation = yupObject().shape({
     .email("Por favor introduce un correo electrónico válido"),
   manager_id: yupString().required("Manager requerido"),
   hitman_type: yupString().required("Tipo requerido"),
+  is_active: yupBool().required("Valor requerido"),
 });
 
 const API_SERVER = process.env.REACT_APP_API_SERVER;
@@ -39,7 +40,10 @@ function DetailHitmanForm({
   const { data } = useQuery<Hitman[]>(
     "my-hitmen",
     async () => {
-      const { data } = await axios.get(`${API_SERVER}/me/my-hitmen`, {
+      const { data } = await axios.get(`${API_SERVER}/me/hitmen`, {
+        params: {
+          is_active: true,
+        },
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -93,6 +97,16 @@ function DetailHitmanForm({
             name="manager_id"
             placeholder="Selecciona un hitman"
             options={dropdownHitmenOptions}
+          />
+          <FormSelect
+            id="is_active"
+            label="Activo?"
+            name="is_active"
+            placeholder="Selecciona un estado"
+            options={[
+              { value: false, text: "Inactivo" },
+              { value: true, text: "Activo" },
+            ]}
           />
           <FormSelect
             id="hitman_type"

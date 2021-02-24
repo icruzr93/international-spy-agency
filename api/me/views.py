@@ -11,9 +11,7 @@ from rest_framework import permissions
 from rest_framework.generics import GenericAPIView
 
 class MyProfile(GenericAPIView):
-    """ 
-    My Profile.
-    """
+
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, format=None):
@@ -23,37 +21,64 @@ class MyProfile(GenericAPIView):
 
 
 class MyHits(GenericAPIView):
-    """
-    Get my hits.
-    """
+
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, format=None):
         hitman_type = request.user.hitman_type
+
         if hitman_type == User.BOSS:
             hits = Hit.objects.all()
             serializer = HitSerializer(hits, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         
         elif hitman_type == User.MANAGER:
-            hits = Hit.objects.all().filter(hitman__manager=request.user)
+            hits = Hit.objects.all().filter(
+                hitman__manager=request.user
+            )
             serializer = HitSerializer(hits, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         elif hitman_type == User.HITMAN:
-            hits = Hit.objects.all().filter(hitman__email=request.user)
+            hits = Hit.objects.all().filter(
+                hitman__email=request.user
+            )
             serializer = HitSerializer(hits, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
             
 
 class MyHitmen(GenericAPIView):
-    """
-    Get my hitmen.
-    """
+
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, format=None):
-        users = User.objects.all().filter(manager__email=request.user)
-        serializer = UserSerializer(users, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        hitman_type = request.user.hitman_type
+        is_active = self.request.query_params.get('is_active', None)
+
+        if hitman_type == User.HITMAN:
+            return Response([], status=status.HTTP_200_OK)
+
+        if is_active is None:
+            users = User.objects.all().filter(
+                manager__email=request.user
+            )
+            serializer = UserSerializer(users, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        is_active = bool(is_active)
+
+        if hitman_type == User.MANAGER:
+            users = User.objects.all().filter(
+                manager__email=request.user,
+                is_active=is_active
+            )
+            serializer = UserSerializer(users, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        if hitman_type == User.BOSS:
+            users = User.objects.all().filter(
+                is_active=is_active
+            )
+            serializer = UserSerializer(users, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 

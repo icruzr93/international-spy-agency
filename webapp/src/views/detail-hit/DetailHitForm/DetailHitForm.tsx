@@ -41,7 +41,10 @@ function DetailHitForm({
   const { data } = useQuery<Hitman[]>(
     "my-hitmen",
     async () => {
-      const { data } = await axios.get(`${API_SERVER}/me/my-hitmen`, {
+      const { data } = await axios.get(`${API_SERVER}/me/hitmen`, {
+        params: {
+          is_active: true,
+        },
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },

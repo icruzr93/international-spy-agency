@@ -17,7 +17,7 @@ function Hits() {
   const { data } = useQuery<Hit[]>(
     "my-hits",
     async () => {
-      const { data } = await axios.get(`${API_SERVER}/me/my-hits`, {
+      const { data } = await axios.get(`${API_SERVER}/me/hits`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
