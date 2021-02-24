@@ -27,20 +27,20 @@ function useAuthContext() {
   }, [dispatchAuthState]);
 
   const setAuth = useCallback(
-    (accessToken: string, refreshToken: string, email: string) => {
+    (accessToken: string, refreshToken: string) => {
       dispatchAuthState({
         type: AuthActions.SET_AUTH,
-        value: { accessToken, refreshToken, email },
+        value: { accessToken, refreshToken },
       });
     },
     [dispatchAuthState]
   );
 
   const setProfile = useCallback(
-    (hitman_type: HitmanTypes) => {
+    (hitman_type: HitmanTypes, email: string) => {
       dispatchAuthState({
         type: AuthActions.SET_PROFILE,
-        value: { hitman_type },
+        value: { hitman_type, email },
       });
     },
     [dispatchAuthState]

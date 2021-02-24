@@ -23,8 +23,8 @@ function Profile() {
       }),
     {
       onSuccess: ({ data }: ProfileSuccessReponse) => {
-        const { hitman_type } = data;
-        setProfile(hitman_type);
+        const { hitman_type, email } = data;
+        setProfile(hitman_type, email);
       },
     }
   );

@@ -1,5 +1,6 @@
 import React from "react";
-import { Badge, Table } from "react-bootstrap";
+import { Badge, Table, Button } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import { useQuery } from "react-query";
 import axios from "axios";
 
@@ -31,18 +32,18 @@ function Hits() {
   if (!data) return <>"Loading..."</>;
 
   return (
-    <Layout pageTitle="Mi lista de objetivos">
+    <Layout pageTitle="Lista de objetivos">
       <Table striped bordered hover>
         <thead>
           <tr>
             <th>#</th>
             <th>Objetivo</th>
             <th>Estado</th>
-            <th>Asignado</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
-          {data.map(({ id, target_name, state, hitman }) => (
+          {data.map(({ id, target_name, state }) => (
             <tr key={id}>
               <td>{id}</td>
               <td>{target_name}</td>
@@ -57,7 +58,11 @@ function Hits() {
                   <Badge variant="danger">{state}</Badge>
                 )}
               </td>
-              <td>{hitman}</td>
+              <td>
+                <Link to={`/hits/${id}`}>
+                  <Button variant="link">Ver</Button>
+                </Link>
+              </td>
             </tr>
           ))}
         </tbody>

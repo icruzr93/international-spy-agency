@@ -1,8 +1,3 @@
-interface LoginFormValues {
-  email: string;
-  password: string;
-}
-
 interface LoginSuccessReponse {
   data: {
     access: string;

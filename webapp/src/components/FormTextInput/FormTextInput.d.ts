@@ -4,6 +4,8 @@ interface FormTextInputProps {
   id: string;
   placeholder: string;
   type: string;
+  as: "textarea" | "input";
+  disabled: boolean;
 }
 
 export { FormTextInputProps };

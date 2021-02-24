@@ -6,13 +6,12 @@ from hits.models import Hit
 class UserSerializer(serializers.ModelSerializer):
     hits = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     hitmen = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    manager = serializers.ReadOnlyField(source='manager.email', read_only=True)
-    manager_id = serializers.IntegerField(required=False, write_only=True)
+    manager_id = serializers.IntegerField(required=False)
     password = serializers.CharField(required=False, write_only=True)
 
     class Meta:
         model = User
-        fields = ["id", 'first_name', 'last_name', 'email', 'manager_id', "manager", 'hitman_type', 'password', 'hits', 'hitmen']
+        fields = ["id", 'first_name', 'last_name', 'email', 'manager_id', 'hitman_type', 'password', 'hits', 'hitmen']
 
     def create(self, validated_data):
         user = User.objects.create(**validated_data)

@@ -1,21 +1,23 @@
 import React from "react";
 import { Redirect } from "react-router";
 import axios from "axios";
-import { Formik, Form, FormikProps, FormikHelpers } from "formik";
+import { Formik, Form, FormikHelpers } from "formik";
 import { Alert, Button } from "react-bootstrap";
-import { useMutation } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import { string as yupString, object as yupObject } from "yup";
 
 import { FormTextInput } from "components/FormTextInput";
 import { Layout } from "components/Layout";
+import { Hit, Hitman } from "global.d";
 
-import { CreateHitFormValues } from "./CreateHit.d";
 import { useAuthContext } from "contexts/AuthContext";
+import { FormSelect } from "components/FormSelect";
 
 const API_SERVER = process.env.REACT_APP_API_SERVER;
 
 const validation = yupObject().shape({
   target_name: yupString().required("Nombre objetivo requerido"),
+  description: yupString().required("Nombre objetivo requerido"),
   hitman_id: yupString().required("Hitman requerido"),
 });
 
@@ -23,19 +25,32 @@ function CreateHit() {
   const { authState } = useAuthContext();
   const { accessToken } = authState;
 
-  const { mutate, isError, isSuccess } = useMutation(
-    (data: CreateHitFormValues) => {
-      return axios.post(`${API_SERVER}/hits/`, data, {
+  const { data } = useQuery<Hitman[]>(
+    "my-hitmen",
+    async () => {
+      const { data } = await axios.get(`${API_SERVER}/me/my-hitmen`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
+      return data;
+    },
+    {
+      initialData: [],
     }
   );
 
+  const { mutate, isError, isSuccess } = useMutation((data: Partial<Hit>) => {
+    return axios.post(`${API_SERVER}/hits/`, data, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+  });
+
   const onSubmit = (
-    values: CreateHitFormValues,
-    helpers: FormikHelpers<CreateHitFormValues>
+    values: Partial<Hit>,
+    helpers: FormikHelpers<Partial<Hit>>
   ) => {
     mutate(values, {
       onError: () => {
@@ -44,9 +59,16 @@ function CreateHit() {
     });
   };
 
+  if (!data) return <>"Loading..."</>;
+
   if (isSuccess) {
     return <Redirect to="/hits" />;
   }
+
+  const dropdownHitmenOptions = data.map(({ id, email }) => ({
+    value: id,
+    text: email,
+  }));
 
   return (
     <Layout pageTitle="Crear objetivo">
@@ -54,32 +76,37 @@ function CreateHit() {
         initialValues={{
           target_name: "",
           hitman_id: "",
+          description: "",
         }}
         validationSchema={validation}
         onSubmit={onSubmit}
       >
-        {({ isValid }: FormikProps<CreateHitFormValues>) => (
-          <Form>
-            <FormTextInput
-              id="target_name"
-              label="Nombre objetivo"
-              name="target_name"
-              placeholder="Nombre"
-              type="text"
-            />
-            <FormTextInput
-              id="hitman_id"
-              label="Hitman"
-              name="hitman_id"
-              placeholder="Introduce tus apellidos"
-              type="text"
-            />
-            {isError && <Alert variant="danger">Datos invalidos</Alert>}
-            <Button type="submit" disabled={!isValid}>
-              Crear objetivo
-            </Button>
-          </Form>
-        )}
+        <Form>
+          <FormTextInput
+            id="target_name"
+            label="Nombre objetivo"
+            name="target_name"
+            placeholder="Nombre"
+            type="text"
+          />
+          <FormTextInput
+            id="description"
+            label="Descripción"
+            name="description"
+            placeholder="Nombre"
+            type="text"
+            as="textarea"
+          />
+          <FormSelect
+            id="hitman_id"
+            label="Hitman"
+            name="hitman_id"
+            placeholder="Selecciona un hitman"
+            options={dropdownHitmenOptions}
+          />
+          {isError && <Alert variant="danger">Datos invalidos</Alert>}
+          <Button type="submit">Crear objetivo</Button>
+        </Form>
       </Formik>
     </Layout>
   );

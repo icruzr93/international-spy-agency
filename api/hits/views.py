@@ -11,7 +11,7 @@ class HitList(APIView):
     """
     List all code hits, or create a new hit.
     """
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, format=None):
         hits = Hit.objects.all()
@@ -29,8 +29,7 @@ class HitDetail(APIView):
     """
     Retrieve, update or delete a hit.
     """
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly, 
-        IsOwnerOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self, pk):
         try: 

@@ -16,12 +16,12 @@ function NavItemsAutheticated() {
   return (
     <>
       <Link to="/hits">Home</Link>
-      <Link to="/hits">Mis hits</Link>
+      <Link to="/hits">Objetivos</Link>
 
       {showManagementLinks && (
         <>
-          <Link to="/hitmen">Mis hitmen</Link>
-          <Link to="/hits/nuevo">Crear objetivo</Link>
+          <Link to="/hitmen">Hitmen</Link>
+          <Link to="/hits/create">Crear objetivo</Link>
         </>
       )}
 
@@ -34,7 +34,7 @@ function NavItemsGuest() {
   return (
     <>
       <Link to="/login">Login</Link>
-      <Link to="/registro">Registro</Link>
+      <Link to="/register">Registro</Link>
     </>
   );
 }

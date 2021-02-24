@@ -1,7 +1,7 @@
 import React from "react";
 import { Redirect } from "react-router";
 import axios from "axios";
-import { Formik, Form, FormikProps, FormikHelpers } from "formik";
+import { Formik, Form, FormikProps } from "formik";
 import { Alert, Button } from "react-bootstrap";
 import { useMutation } from "react-query";
 import { string as yupString, object as yupObject } from "yup";
@@ -9,7 +9,7 @@ import { string as yupString, object as yupObject } from "yup";
 import { FormTextInput } from "components/FormTextInput";
 import { Layout } from "components/Layout";
 
-import { RegisterValues } from "./Register.d";
+import { Hitman } from "global";
 
 const API_SERVER = process.env.REACT_APP_API_SERVER;
 
@@ -19,23 +19,21 @@ const validation = yupObject().shape({
   email: yupString()
     .required("Correo electrónico requerido")
     .email("Por favor introduce un correo electrónico válido"),
-  password: yupString().required("Password requerido"),
+  password: yupString()
+    .required("Contraseña requerida")
+    .min(8, "Contraseña muy corta - 8 caracteres mínimo.")
+    .matches(/[a-zA-Z0-9_]/, "Solo numeros y letras son permitidos."),
 });
 
 function Register() {
-  const { mutate, isError, isSuccess } = useMutation((data: RegisterValues) => {
-    return axios.post(`${API_SERVER}/users/`, data);
-  });
+  const { mutate, isError, isSuccess } = useMutation(
+    (data: Partial<Hitman>) => {
+      return axios.post(`${API_SERVER}/users/`, data);
+    }
+  );
 
-  const onSubmit = (
-    values: RegisterValues,
-    helpers: FormikHelpers<RegisterValues>
-  ) => {
-    mutate(values, {
-      onError: () => {
-        helpers.setSubmitting(false);
-      },
-    });
+  const onSubmit = (values: Partial<Hitman>) => {
+    mutate(values);
   };
 
   if (isSuccess) {
@@ -53,8 +51,9 @@ function Register() {
         }}
         validationSchema={validation}
         onSubmit={onSubmit}
+        validateOnMount={true}
       >
-        {({ isSubmitting, isValid }: FormikProps<RegisterValues>) => (
+        {({ isValid }: FormikProps<Partial<Hitman>>) => (
           <Form>
             <FormTextInput
               id="first_name"
@@ -85,7 +84,7 @@ function Register() {
               placeholder="Introduce tu contraseña"
             />
             {isError && <Alert variant="danger">Datos invalidos</Alert>}
-            <Button type="submit" disabled={!isValid || isSubmitting}>
+            <Button type="submit" disabled={!isValid}>
               Crear cuenta
             </Button>
           </Form>

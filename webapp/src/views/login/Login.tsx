@@ -10,7 +10,8 @@ import { FormTextInput } from "components/FormTextInput";
 import { Layout } from "components/Layout";
 import { useAuthContext } from "contexts/AuthContext";
 
-import { LoginFormValues, LoginSuccessReponse } from "./Login.d";
+import { LoginSuccessReponse } from "./Login.d";
+import { Hitman } from "global";
 
 const API_SERVER = process.env.REACT_APP_API_SERVER;
 
@@ -18,21 +19,23 @@ const validation = yupObject().shape({
   email: yupString()
     .required("Correo electrónico requerido")
     .email("Por favor introduce un correo electrónico válido"),
-  password: yupString().required("Password requerido"),
+  password: yupString()
+    .required("Contraseña requerida")
+    .min(8, "Contraseña muy corta - 8 caracteres mínimo.")
+    .matches(/[a-zA-Z0-9_]/, "Solo numeros y letras son permitidos."),
 });
 
 function Login() {
   const { isAuthenticated, setAuth } = useAuthContext();
-  const { mutate, isError } = useMutation((data: LoginFormValues) => {
+  const { mutate, isError } = useMutation((data: Partial<Hitman>) => {
     return axios.post(`${API_SERVER}/auth/login/`, data);
   });
 
-  const onSubmit = (values: LoginFormValues) => {
+  const onSubmit = (values: Partial<Hitman>) => {
     mutate(values, {
       onSuccess: ({ data }: LoginSuccessReponse) => {
         const { access, refresh } = data;
-        const { email } = values;
-        setAuth(access, refresh, email);
+        setAuth(access, refresh);
       },
     });
   };
@@ -50,8 +53,9 @@ function Login() {
         }}
         onSubmit={onSubmit}
         validationSchema={validation}
+        validateOnMount={true}
       >
-        {({ isValid }: FormikProps<LoginFormValues>) => (
+        {({ isValid }: FormikProps<Partial<Hitman>>) => (
           <Form>
             <FormTextInput
               id="email"

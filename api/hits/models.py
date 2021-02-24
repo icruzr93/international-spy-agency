@@ -14,6 +14,7 @@ class Hit(models.Model):
     )
 
     target_name = models.CharField(max_length=100, null=False)
+    description = models.CharField(max_length=200, null=False)
     state = models.CharField(choices=HIT_STATES, default='in_progress', max_length=50)
 
     hitman = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='hits', on_delete=models.CASCADE)

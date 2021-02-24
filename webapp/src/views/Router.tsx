@@ -7,6 +7,8 @@ import { Register } from "views/register";
 import { Hitmen } from "views/hitmen";
 import { Hits } from "views/hits";
 import { CreateHit } from "views/create-hit";
+import { DetailHit } from "views/detail-hit";
+import { DetailHitman } from "views/detail-hitman";
 import { AuthProvider } from "contexts/AuthContext";
 import { Profile } from "./profile";
 
@@ -16,11 +18,13 @@ function App() {
       <Switch>
         <Route path="/login" component={Login} />
         <Route path="/logout" component={Logout} />
-        <Route path="/registro" component={Register} />
+        <Route path="/register" component={Register} />
         <Route path="/profile" component={Profile} />
-        <Route path="/hits/nuevo" exact component={CreateHit} />
         <Route path="/hits" exact component={Hits} />
-        <Route path="/hitmen" component={Hitmen} />
+        <Route path="/hits/create" exact component={CreateHit} />
+        <Route path="/hits/:id" exact component={DetailHit} />
+        <Route path="/hitmen" exact component={Hitmen} />
+        <Route path="/hitmen/:id" exact component={DetailHitman} />
         <Route path="/home" component={Hits} />
         <Route path="/" component={Login} />
       </Switch>

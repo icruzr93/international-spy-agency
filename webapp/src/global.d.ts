@@ -19,6 +19,7 @@ interface Hit {
   target_name: string;
   state: string;
   hitman: string;
+  description: string;
 }
 
 interface Hitman {

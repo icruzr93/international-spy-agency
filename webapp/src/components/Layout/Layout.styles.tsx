@@ -20,8 +20,9 @@ const StyledMainContainer = styled.main`
   -webkit-box-shadow: 3px 3px 10px #cecece;
   -moz-box-shadow: 3px 3px 10px #cecece;
   box-shadow: 3px 3px 10px #cecece;
-  margin: 2rem auto 0 auto;
-  width: 40%;
+  align-self: center;
+  justify-self: center;
+  min-width: 40%;
 
   @media (max-width: 480px) {
     width: auto;

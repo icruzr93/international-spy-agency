@@ -1,5 +1,6 @@
 import React from "react";
-import { Badge, Table } from "react-bootstrap";
+import { Badge, Button, Table } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import { useQuery } from "react-query";
 import axios from "axios";
 
@@ -31,7 +32,7 @@ function Hitmen() {
   if (!data) return <>"Loading..."</>;
 
   return (
-    <Layout pageTitle="Mis hitmen">
+    <Layout pageTitle="Hitmen">
       <Table striped bordered hover>
         <thead>
           <tr>
@@ -39,29 +40,37 @@ function Hitmen() {
             <th>Nombre</th>
             <th>Apellido</th>
             <th>Email</th>
-            <th>Email</th>
+            <th>Tipo</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
-          {data.map(({ id, first_name, last_name, hitman_type, manager }) => (
-            <tr key={id}>
-              <td>{id}</td>
-              <td>{first_name}</td>
-              <td>{last_name}</td>
-              <td>
-                {hitman_type === HitmanTypes.BOSS && (
-                  <Badge variant="primary">{hitman_type}</Badge>
-                )}
-                {hitman_type === HitmanTypes.MANAGER && (
-                  <Badge variant="success">{hitman_type}</Badge>
-                )}
-                {hitman_type === HitmanTypes.HITMAN && (
-                  <Badge variant="danger">{hitman_type}</Badge>
-                )}
-              </td>
-              <td>{manager}</td>
-            </tr>
-          ))}
+          {data.map(
+            ({ id, first_name, last_name, email, hitman_type, manager }) => (
+              <tr key={id}>
+                <td>{id}</td>
+                <td>{first_name}</td>
+                <td>{last_name}</td>
+                <td>{email}</td>
+                <td>
+                  {hitman_type === HitmanTypes.BOSS && (
+                    <Badge variant="primary">{hitman_type}</Badge>
+                  )}
+                  {hitman_type === HitmanTypes.MANAGER && (
+                    <Badge variant="success">{hitman_type}</Badge>
+                  )}
+                  {hitman_type === HitmanTypes.HITMAN && (
+                    <Badge variant="danger">{hitman_type}</Badge>
+                  )}
+                </td>
+                <td>
+                  <Link to={`/hitmen/${id}`}>
+                    <Button variant="link">Ver</Button>
+                  </Link>
+                </td>
+              </tr>
+            )
+          )}
         </tbody>
       </Table>
     </Layout>

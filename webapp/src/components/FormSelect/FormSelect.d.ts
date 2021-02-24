@@ -1,7 +1,15 @@
-interface FormSelectProps extends React.InputHTMLAttributes<HTMLInputElement> {
+interface optionsProps {
+  text: string;
+  value: bool | string | number;
+}
+
+interface FormSelectProps {
   name: string;
   label: string | React.ReactElement;
-  caption?: string;
+  id: string;
+  placeholder: string;
+  options: Array<optionsProps>;
+  disabled: boolean;
 }
 
 export { FormSelectProps };
