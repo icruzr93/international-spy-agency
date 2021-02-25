@@ -25,5 +25,14 @@ services:
     depends_on:
       - db
 
+  webapp:
+    build: ./webapp
+    ports:
+      - 8080:80
+    env_file:
+      - ./webapp/.env
+    depends_on:
+      - api
+
 volumes:
   postgres_data:

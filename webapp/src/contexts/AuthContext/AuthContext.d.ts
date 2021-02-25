@@ -1,4 +1,4 @@
-import { Hitman, HitmanTypes } from "global.d";
+import { HitmanTypes } from "global.d";
 
 type AuthState = {
   accessToken: string | undefined;
