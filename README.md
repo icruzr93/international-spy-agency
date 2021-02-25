@@ -28,7 +28,7 @@ make start
 make loaddata
 ```
 
-#### Step 3: Go to [http://localhost:8080/login](http://localhost:8080/login) and start hitting targets.
+#### Step 3: Go to [http://localhost:8080/login](http://localhost:8080/login) and start hitting some targets.
 
 ## You can make use of any of the following users to start navigatin.
 
