@@ -5,6 +5,7 @@ Simple tool (Api and UI) for an agency that conducts planned hits and has done s
 ## Main tools used
 
 - [CreateReactApp w. Typescript](https://www.typescriptlang.org/docs/handbook/react.html)
+- [React Bootstrap](https://react-bootstrap.github.io/)
 - [Formik](https://formik.org/)
 - [Django](https://www.djangoproject.com/)
 - [DjangoRestFramework](https://www.django-rest-framework.org/)
