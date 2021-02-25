@@ -2,7 +2,7 @@
 
 Simple tool (Api and UI) for an agency that conducts planned hits and has done so for decades.
 
-##  Main tools used
+## Main tools used
 
 - [CreateReactApp w. Typescript](https://www.typescriptlang.org/docs/handbook/react.html)
 - [Formik](https://formik.org/)
