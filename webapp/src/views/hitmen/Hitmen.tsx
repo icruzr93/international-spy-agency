@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Badge, Button, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useQuery } from "react-query";
@@ -11,10 +11,11 @@ import { useAuthContext } from "contexts/AuthContext";
 const API_SERVER = process.env.REACT_APP_API_SERVER;
 
 function Hitmen() {
+  const [hitmen, setHitmen] = useState<Hitman[]>([]);
   const { authState } = useAuthContext();
   const { accessToken } = authState;
 
-  const { data } = useQuery<Hitman[]>(
+  useQuery<Hitman[]>(
     "my-hitmen",
     async () => {
       const { data } = await axios.get(`${API_SERVER}/me/hitmen`, {
@@ -26,10 +27,15 @@ function Hitmen() {
     },
     {
       initialData: [],
+      refetchInterval: false,
+      refetchOnWindowFocus: false,
+      onSuccess: (data) => {
+        setHitmen(data);
+      },
     }
   );
 
-  if (!data) return <>"Loading..."</>;
+  if (!hitmen) return <>"Loading..."</>;
 
   return (
     <Layout pageTitle="Hitmen">
@@ -46,7 +52,7 @@ function Hitmen() {
           </tr>
         </thead>
         <tbody>
-          {data.map(
+          {hitmen.map(
             ({ id, first_name, last_name, email, hitman_type, is_active }) => (
               <tr key={id}>
                 <td>{id}</td>

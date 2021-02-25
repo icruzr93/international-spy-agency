@@ -1,10 +1,11 @@
-import { HitmanTypes } from "global.d";
+import { Hitman, HitmanTypes } from "global.d";
 
 type AuthState = {
   accessToken: string | undefined;
   refreshToken: string | undefined;
   email: string | undefined;
   hitman_type: HitmanTypes | undefined;
+  id: number | undefined;
 };
 
 interface AuthContextProps {

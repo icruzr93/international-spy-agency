@@ -18,12 +18,12 @@ interface Hit {
   id: string;
   target_name: string;
   state: string;
-  hitman: string;
+  hitman_id: string;
   description: string;
 }
 
 interface Hitman {
-  id: string;
+  id: number;
   first_name: string;
   last_name: string;
   email: string;

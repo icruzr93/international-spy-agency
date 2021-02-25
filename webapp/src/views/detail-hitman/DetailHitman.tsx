@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Redirect, useParams } from "react-router";
 import axios from "axios";
 import { useMutation, useQuery } from "react-query";
@@ -12,11 +12,12 @@ import { DetailHitmanForm } from "./DetailHitmanForm";
 const API_SERVER = process.env.REACT_APP_API_SERVER;
 
 function DetailHitman() {
+  const [hitmanData, setHitmanData] = useState<Partial<Hitman>>();
   const { id } = useParams<{ id: string }>();
   const { authState } = useAuthContext();
   const { accessToken } = authState;
 
-  const { data } = useQuery<Hitman>(
+  useQuery<Hitman>(
     "hitman",
     async () => {
       const { data } = await axios.get(`${API_SERVER}/users/${id}`, {
@@ -28,6 +29,11 @@ function DetailHitman() {
     },
     {
       cacheTime: 0,
+      refetchInterval: false,
+      refetchOnWindowFocus: false,
+      onSuccess: (data) => {
+        setHitmanData(data);
+      },
     }
   );
 
@@ -45,14 +51,14 @@ function DetailHitman() {
     mutate(values);
   };
 
-  if (!data) return <>"Loading..."</>;
+  if (!hitmanData) return <>"Loading..."</>;
 
   if (isSuccess) return <Redirect to="/hitmen" />;
 
   return (
     <Layout pageTitle="Editar Hitman">
       <DetailHitmanForm
-        initialValues={data}
+        initialValues={hitmanData}
         onSubmit={onSubmit}
         hasError={isError}
       />

@@ -1,14 +1,16 @@
-from hitmen.models import User
-from hitmen.serializers import UserSerializer
-from hits.models import Hit
-from hits.serializers import HitSerializer
-
 from django.http import Http404
+from django.db.models import Q
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import permissions
 from rest_framework.generics import GenericAPIView
+
+from hitmen.models import User
+from hitmen.serializers import UserSerializer
+from hits.models import Hit
+from hits.serializers import HitSerializer
+
 
 class MyProfile(GenericAPIView):
 
@@ -34,7 +36,7 @@ class MyHits(GenericAPIView):
         
         elif hitman_type == User.MANAGER:
             hits = Hit.objects.all().filter(
-                hitman__manager=request.user
+                Q(hitman__manager=request.user) | Q(hitman=request.user)
             )
             serializer = HitSerializer(hits, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -58,10 +60,15 @@ class MyHitmen(GenericAPIView):
         if hitman_type == User.HITMAN:
             return Response([], status=status.HTTP_200_OK)
 
-        if is_active is None:
+        if is_active is None and hitman_type == User.MANAGER:
             users = User.objects.all().filter(
                 manager__email=request.user
-            )
+            ).exclude(id=request.user.id)
+            serializer = UserSerializer(users, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        if is_active is None and hitman_type == User.BOSS:
+            users = User.objects.all().exclude(id=request.user.id)
             serializer = UserSerializer(users, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -71,14 +78,14 @@ class MyHitmen(GenericAPIView):
             users = User.objects.all().filter(
                 manager__email=request.user,
                 is_active=is_active
-            )
+            ).exclude(id=request.user.id)
             serializer = UserSerializer(users, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         if hitman_type == User.BOSS:
             users = User.objects.all().filter(
                 is_active=is_active
-            )
+            ).exclude(id=request.user.id)
             serializer = UserSerializer(users, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
 

@@ -3,7 +3,7 @@ from pathlib import Path
 from datetime import timedelta
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-SECRET_KEY = 'yc@weuf-vywc@+$p0nt4_j==b_=&)%s_*t%&1yu%@6*tna!%!l'
+SECRET_KEY = os.environ.get("SECRET_KEY")
 DEBUG = True
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(" ")
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Redirect, useParams } from "react-router";
 import axios from "axios";
 import { useMutation, useQuery } from "react-query";
@@ -12,11 +12,12 @@ import { DetailHitForm } from "./DetailHitForm";
 const API_SERVER = process.env.REACT_APP_API_SERVER;
 
 function DetailHit() {
+  const [hitData, setHitData] = useState<Partial<Hit>>();
   const { id } = useParams<{ id: string }>();
   const { authState } = useAuthContext();
   const { accessToken } = authState;
 
-  const { data } = useQuery<Hit>(
+  useQuery<Hit>(
     "hit",
     async () => {
       const { data } = await axios.get(`${API_SERVER}/hits/${id}`, {
@@ -27,7 +28,11 @@ function DetailHit() {
       return data;
     },
     {
-      cacheTime: 0,
+      refetchInterval: false,
+      refetchOnWindowFocus: false,
+      onSuccess: (data) => {
+        setHitData(data);
+      },
     }
   );
 
@@ -39,19 +44,18 @@ function DetailHit() {
     });
   });
 
+  if (!hitData) return <>Loading</>;
+
   const onSubmit = (values: Partial<Hit>) => {
-    console.log(values);
     mutate(values);
   };
-
-  if (!data) return <>"Loading..."</>;
 
   if (isSuccess) return <Redirect to="/hits" />;
 
   return (
     <Layout pageTitle="Editar objetivo">
       <DetailHitForm
-        initialValues={data}
+        initialValues={hitData}
         onSubmit={onSubmit}
         hasError={isError}
       />

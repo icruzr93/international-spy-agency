@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Alert, Button } from "react-bootstrap";
 import { useQuery } from "react-query";
@@ -7,7 +7,7 @@ import { Formik, Form, FormikProps } from "formik";
 
 import { FormTextInput } from "components/FormTextInput";
 import { useAuthContext } from "contexts/AuthContext";
-import { FormSelect } from "components/FormSelect";
+import { FormSelect, SelectOption } from "components/FormSelect";
 import { Hitman, HitmanTypes } from "global.d";
 
 const validation = yupObject().shape({
@@ -34,10 +34,11 @@ function DetailHitmanForm({
   hasError,
   onSubmit,
 }: DetailHitmanFormProps) {
+  const [hitmanOptions, setHitmanOptions] = useState<SelectOption[]>([]);
   const { authState } = useAuthContext();
-  const { accessToken } = authState;
+  const { accessToken, id, email } = authState;
 
-  const { data } = useQuery<Hitman[]>(
+  useQuery<Hitman[]>(
     "my-hitmen",
     async () => {
       const { data } = await axios.get(`${API_SERVER}/me/hitmen`, {
@@ -52,15 +53,27 @@ function DetailHitmanForm({
     },
     {
       initialData: [],
+      refetchInterval: false,
+      refetchOnWindowFocus: false,
+      onSuccess: (data) => {
+        const options = data.map(({ id, email }) => ({
+          value: id,
+          text: email,
+        }));
+
+        setHitmanOptions((prevState) => [...prevState, ...options]);
+      },
     }
   );
 
-  if (!data) return <>"Loading..."</>;
+  useEffect(() => {
+    setHitmanOptions((prevState) => [
+      { value: id, text: email } as SelectOption,
+      ...prevState,
+    ]);
+  }, [setHitmanOptions, id, email]);
 
-  const dropdownHitmenOptions = data.map(({ id, email }) => ({
-    value: id,
-    text: email,
-  }));
+  if (!hitmanOptions) return <>"Loading..."</>;
 
   return (
     <Formik
@@ -96,7 +109,7 @@ function DetailHitmanForm({
             label="Manager"
             name="manager_id"
             placeholder="Selecciona un hitman"
-            options={dropdownHitmenOptions}
+            options={hitmanOptions}
           />
           <FormSelect
             id="is_active"

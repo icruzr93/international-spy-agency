@@ -1,4 +1,4 @@
-import { HitmanTypes } from "global";
+import { Hitman } from "global";
 import { useCallback, useContext, useMemo } from "react";
 import { AuthContext } from "./AuthContext";
 import { AuthActions, AuthState } from "./AuthContext.d";
@@ -37,10 +37,10 @@ function useAuthContext() {
   );
 
   const setProfile = useCallback(
-    (hitman_type: HitmanTypes, email: string) => {
+    ({ id, email, hitman_type }: Partial<Hitman>) => {
       dispatchAuthState({
         type: AuthActions.SET_PROFILE,
-        value: { hitman_type, email },
+        value: { id, email, hitman_type },
       });
     },
     [dispatchAuthState]

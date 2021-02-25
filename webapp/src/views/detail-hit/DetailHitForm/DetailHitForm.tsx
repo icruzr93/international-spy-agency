@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { Alert, Button } from "react-bootstrap";
 import { useQuery } from "react-query";
@@ -7,7 +7,7 @@ import { Formik, Form, FormikProps } from "formik";
 
 import { FormTextInput } from "components/FormTextInput";
 import { useAuthContext } from "contexts/AuthContext";
-import { FormSelect } from "components/FormSelect";
+import { FormSelect, SelectOption } from "components/FormSelect";
 import { Hit, Hitman, HitmanTypes, HitStateTypes } from "global.d";
 
 const validation = yupObject().shape({
@@ -29,16 +29,12 @@ function DetailHitForm({
   hasError,
   onSubmit,
 }: DetailHitFormProps) {
+  const [hitmanOptions, setHitmanOptions] = useState<SelectOption[]>([]);
   const { authState } = useAuthContext();
-  const { accessToken, hitman_type } = authState;
-  const { state } = initialValues;
+  const { accessToken, hitman_type, id, email } = authState;
+  const { state, hitman_id } = initialValues;
 
-  const isHitman = [HitmanTypes.HITMAN].includes(hitman_type as HitmanTypes);
-  const isClosed = [HitStateTypes.COMPLETED, HitStateTypes.FAILED].includes(
-    state as HitStateTypes
-  );
-
-  const { data } = useQuery<Hitman[]>(
+  useQuery<Hitman[]>(
     "my-hitmen",
     async () => {
       const { data } = await axios.get(`${API_SERVER}/me/hitmen`, {
@@ -52,11 +48,38 @@ function DetailHitForm({
       return data;
     },
     {
-      initialData: [],
+      refetchInterval: false,
+      refetchOnWindowFocus: false,
+      onSuccess: (data) => {
+        const options = data.map(({ id, email }) => ({
+          value: id,
+          text: email,
+        }));
+        setHitmanOptions((prevState) => [...prevState, ...options]);
+      },
     }
   );
 
-  if (!data) return <>"Loading..."</>;
+  const isOwner = useMemo(() => {
+    return hitman_id === id;
+  }, [hitman_id, id]);
+  const isHitman = useMemo(() => {
+    return [HitmanTypes.HITMAN].includes(hitman_type as HitmanTypes);
+  }, [hitman_type]);
+  const isClosed = useMemo(() => {
+    return [HitStateTypes.COMPLETED, HitStateTypes.FAILED].includes(
+      state as HitStateTypes
+    );
+  }, [state]);
+
+  useEffect(() => {
+    if (isOwner) {
+      setHitmanOptions((prevState) => [
+        { value: id, text: email } as SelectOption,
+        ...prevState,
+      ]);
+    }
+  }, [isOwner, setHitmanOptions, id, email]);
 
   return (
     <Formik
@@ -90,10 +113,7 @@ function DetailHitForm({
               label="Hitman"
               name="hitman_id"
               placeholder="Selecciona un hitman"
-              options={data.map(({ id, email }) => ({
-                value: id,
-                text: email,
-              }))}
+              options={hitmanOptions}
               disabled={isHitman || isClosed}
             />
             <FormSelect
@@ -106,7 +126,7 @@ function DetailHitForm({
                 { value: HitStateTypes.COMPLETED, text: "Completado" },
                 { value: HitStateTypes.FAILED, text: "Fallido" },
               ]}
-              disabled={!isHitman || isClosed}
+              disabled={!isOwner || isClosed}
             />
             {hasError && <Alert variant="danger">Datos invalidos</Alert>}
             <Button type="submit" disabled={!isValid || isClosed}>

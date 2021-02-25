@@ -1,4 +1,4 @@
-interface optionsProps {
+interface SelectOption {
   text: string;
   value: bool | string | number;
 }
@@ -8,8 +8,8 @@ interface FormSelectProps {
   label: string | React.ReactElement;
   id: string;
   placeholder: string;
-  options: Array<optionsProps>;
+  options: SelectOption[];
   disabled: boolean;
 }
 
-export { FormSelectProps };
+export { FormSelectProps, SelectOption };

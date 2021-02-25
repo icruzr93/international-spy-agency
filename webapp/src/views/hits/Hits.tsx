@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Badge, Table, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useQuery } from "react-query";
@@ -11,10 +11,11 @@ import { useAuthContext } from "contexts/AuthContext";
 const API_SERVER = process.env.REACT_APP_API_SERVER;
 
 function Hits() {
+  const [hits, setHits] = useState<Hit[]>([]);
   const { authState } = useAuthContext();
   const { accessToken } = authState;
 
-  const { data } = useQuery<Hit[]>(
+  useQuery<Hit[]>(
     "my-hits",
     async () => {
       const { data } = await axios.get(`${API_SERVER}/me/hits`, {
@@ -26,10 +27,15 @@ function Hits() {
     },
     {
       initialData: [],
+      refetchInterval: false,
+      refetchOnWindowFocus: false,
+      onSuccess: (data) => {
+        setHits(data);
+      },
     }
   );
 
-  if (!data) return <>"Loading..."</>;
+  if (!hits) return <>"Loading..."</>;
 
   return (
     <Layout pageTitle="Lista de objetivos">
@@ -43,7 +49,7 @@ function Hits() {
           </tr>
         </thead>
         <tbody>
-          {data.map(({ id, target_name, state }) => (
+          {hits.map(({ id, target_name, state }) => (
             <tr key={id}>
               <td>{id}</td>
               <td>{target_name}</td>

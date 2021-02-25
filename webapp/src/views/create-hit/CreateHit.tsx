@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Redirect } from "react-router";
 import axios from "axios";
 import { Formik, Form, FormikHelpers } from "formik";
@@ -11,7 +11,7 @@ import { Layout } from "components/Layout";
 import { Hit, Hitman } from "global.d";
 
 import { useAuthContext } from "contexts/AuthContext";
-import { FormSelect } from "components/FormSelect";
+import { FormSelect, SelectOption } from "components/FormSelect";
 
 const API_SERVER = process.env.REACT_APP_API_SERVER;
 
@@ -22,10 +22,11 @@ const validation = yupObject().shape({
 });
 
 function CreateHit() {
+  const [hitmanOptions, setHitmanOptions] = useState<SelectOption[]>([]);
   const { authState } = useAuthContext();
   const { accessToken } = authState;
 
-  const { data } = useQuery<Hitman[]>(
+  useQuery<Hitman[]>(
     "my-hitmen",
     async () => {
       const { data } = await axios.get(`${API_SERVER}/me/hitmen`, {
@@ -40,6 +41,16 @@ function CreateHit() {
     },
     {
       initialData: [],
+      refetchInterval: false,
+      refetchOnWindowFocus: false,
+      onSuccess: (data) => {
+        const options = data.map(({ id, email }) => ({
+          value: id,
+          text: email,
+        }));
+
+        setHitmanOptions(options);
+      },
     }
   );
 
@@ -62,16 +73,9 @@ function CreateHit() {
     });
   };
 
-  if (!data) return <>"Loading..."</>;
-
   if (isSuccess) {
     return <Redirect to="/hits" />;
   }
-
-  const dropdownHitmenOptions = data.map(({ id, email }) => ({
-    value: id,
-    text: email,
-  }));
 
   return (
     <Layout pageTitle="Crear objetivo">
@@ -105,7 +109,7 @@ function CreateHit() {
             label="Hitman"
             name="hitman_id"
             placeholder="Selecciona un hitman"
-            options={dropdownHitmenOptions}
+            options={hitmanOptions}
           />
           {isError && <Alert variant="danger">Datos invalidos</Alert>}
           <Button type="submit">Crear objetivo</Button>

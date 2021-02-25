@@ -14,3 +14,6 @@ migrations:
 
 migrate:
 	docker-compose exec api python manage.py migrate
+
+loaddata:
+	docker-compose exec api python manage.py loaddata users.json

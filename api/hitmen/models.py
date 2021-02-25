@@ -5,6 +5,7 @@ from django.conf import settings
 
 from hitmen.managers import UserManager
 
+DEFAULT_MANAGER = 1
 
 class User(AbstractBaseUser, PermissionsMixin):
     BOSS = 'boss'
@@ -21,7 +22,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=255, null=False)
     last_name = models.CharField(max_length=255, null=False)
     hitman_type = models.CharField(choices=HITMAN_TYPES, default="hitman", max_length=50, null=False)
-    manager = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='hitmen', on_delete=models.CASCADE, null=True)
+    manager = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='hitmen', on_delete=models.CASCADE, default=DEFAULT_MANAGER, null=True)
     is_active = models.BooleanField(default=True)
 
     objects = UserManager()
